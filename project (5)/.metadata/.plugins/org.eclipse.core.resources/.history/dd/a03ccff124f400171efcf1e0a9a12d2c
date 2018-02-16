@@ -1,0 +1,211 @@
+package wproject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Properties;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
+
+public class Utils {
+
+	public static List<List<Engagement>> queryEngagement() throws IOException, Exception {
+
+		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+		try {
+
+			Properties pr = new Properties();
+			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+			InputStream input = classLoader.getResourceAsStream("prop.properties");
+			pr.load(input);
+
+			String url1 = pr.getProperty("url1");
+			String url2 = pr.getProperty("url2");
+
+			HttpGet httpget1 = new HttpGet(url1);
+			HttpGet httpget2 = new HttpGet(url2);
+			// System.out.println("Executing request " +
+			// httpget1.getRequestLine());
+
+			httpget1.addHeader("Accept", "application/json");
+			httpget2.addHeader("Accept", "application/json");
+
+			ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
+
+				@Override
+				public String handleResponse(final HttpResponse response) throws ClientProtocolException, IOException {
+					int status = response.getStatusLine().getStatusCode();
+					if (status >= 200 && status < 300) {
+						HttpEntity entity = response.getEntity();
+						return entity != null ? EntityUtils.toString(entity) : null;
+					} else {
+						throw new ClientProtocolException("Unexpected response status: " + status);
+					}
+				}
+
+			};
+
+			String responseBody1 = httpClient.execute(httpget1, responseHandler);
+			String responseBody2 = httpClient.execute(httpget2, responseHandler);
+
+			JSONObject jsonObject1 = new JSONObject(responseBody1);
+			JSONObject jsonObject2 = new JSONObject(responseBody2);
+
+			List<Engagement> list1 = new ArrayList<Engagement>();
+			List<Engagement> list2 = new ArrayList<Engagement>();
+			List<Engagement> list3 = new ArrayList<Engagement>();
+
+			List<List<Engagement>> list = new ArrayList<List<Engagement>>();
+
+			HashMap<String, String> hm = new HashMap<String, String>();
+			int n1 = jsonObject1.getJSONObject("Engagements").getJSONArray("Engagement").length();
+			int n2 = jsonObject2.getJSONObject("Allocation_Types").getJSONArray("Allocation_type").length();
+
+			// System.out.println(n1);
+
+			for (int temp = 0; temp < n2; temp++) {
+
+				String x = jsonObject2.getJSONObject("Allocation_Types").getJSONArray("Allocation_type")
+						.getJSONObject(temp).getString("id");
+				String y = jsonObject2.getJSONObject("Allocation_Types").getJSONArray("Allocation_type")
+						.getJSONObject(temp).getString("allocationType");
+
+				hm.put(x, y);
+
+			}
+
+			for (int temp = 0; temp < n1; temp++) {
+
+				String allocation_type = jsonObject1.getJSONObject("Engagements").getJSONArray("Engagement")
+						.getJSONObject(temp).getString("allocation_type");
+				String id = jsonObject1.getJSONObject("Engagements").getJSONArray("Engagement").getJSONObject(temp)
+						.getString("id");
+				String person_email = "empty";
+				if (jsonObject1.getJSONObject("Engagements").getJSONArray("Engagement").getJSONObject(temp)
+						.isNull("person_email")) {
+					person_email = "empty";
+				} else {
+					person_email = jsonObject1.getJSONObject("Engagements").getJSONArray("Engagement")
+							.getJSONObject(temp).getString("person_email");
+				}
+				String customer_name = jsonObject1.getJSONObject("Engagements").getJSONArray("Engagement")
+						.getJSONObject(temp).getString("customer_name");
+				String project_name = jsonObject1.getJSONObject("Engagements").getJSONArray("Engagement")
+						.getJSONObject(temp).getString("project_name");
+				String engagement_code = jsonObject1.getJSONObject("Engagements").getJSONArray("Engagement")
+						.getJSONObject(temp).getString("engagement_code");
+				String engagement_nature = jsonObject1.getJSONObject("Engagements").getJSONArray("Engagement")
+						.getJSONObject(temp).getString("engagement_nature");
+				String country = jsonObject1.getJSONObject("Engagements").getJSONArray("Engagement").getJSONObject(temp)
+						.getString("country");
+				String status = jsonObject1.getJSONObject("Engagements").getJSONArray("Engagement").getJSONObject(temp)
+						.getString("status");
+
+				String start_date = jsonObject1.getJSONObject("Engagements").getJSONArray("Engagement")
+						.getJSONObject(temp).getString("start_date");
+				String end_date = jsonObject1.getJSONObject("Engagements").getJSONArray("Engagement")
+						.getJSONObject(temp).getString("end_date");
+				String allocation_start_date = "empty";
+				if (jsonObject1.getJSONObject("Engagements").getJSONArray("Engagement").getJSONObject(temp)
+						.isNull("allocation_start_date")) {
+					allocation_start_date = "empty";
+
+				} else {
+					allocation_start_date = jsonObject1.getJSONObject("Engagements").getJSONArray("Engagement")
+							.getJSONObject(temp).getString("allocation_start_date");
+				}
+				String allocation_end_date = "empty";
+				if (jsonObject1.getJSONObject("Engagements").getJSONArray("Engagement").getJSONObject(temp)
+						.isNull("allocation_end_date")) {
+					allocation_end_date = "empty";
+
+				} else {
+					allocation_end_date = jsonObject1.getJSONObject("Engagements").getJSONArray("Engagement")
+							.getJSONObject(temp).getString("allocation_end_date");
+				}
+				String engagement_status = jsonObject1.getJSONObject("Engagements").getJSONArray("Engagement")
+						.getJSONObject(temp).getString("engagement_status");
+				String allocation_type2 = hm.get(allocation_type);
+
+				Date date = new Date();
+				Calendar c = Calendar.getInstance();
+				Calendar d = Calendar.getInstance();
+				c.setTime(date);
+				d.setTime(date);
+
+				int i = c.get(Calendar.DAY_OF_WEEK) - c.getFirstDayOfWeek();
+
+				c.add(Calendar.DATE, -i - 7);
+				d.add(Calendar.DATE, -i);
+
+				Date start = c.getTime();
+				Date start1 = d.getTime();
+				c.add(Calendar.DATE, 6);
+
+				Date end = c.getTime();
+				Date end1 = date;
+				String sDate1 = allocation_end_date;
+				String sDate2 = allocation_start_date;
+				String sDate3 = end_date;
+
+				Date date3 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").parse(sDate3);
+
+				if (!sDate1.equals("empty") || !sDate2.equals("empty")) {
+					Date date1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").parse(sDate1);
+					Date date2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").parse(sDate2);
+					if (engagement_status.equals("In Progress") && end1.before(date1) && end1.after(date2)) {
+						Engagement en = new Engagement(id, person_email, customer_name, status, project_name,
+								engagement_code, engagement_nature, country, start_date, end_date, engagement_status,
+								allocation_type2);
+						list1.add(en);
+						// return list1;
+					}
+				}
+				//last week project
+				if (sDate3 != null && sDate3.length() > 0) {
+					if (status.equals("Completed") && date3.before(end) && date3.after(start)) {
+						Engagement en2 = new Engagement(id, person_email, customer_name, status, project_name,
+								engagement_code, engagement_nature, country, start_date, end_date, engagement_status,
+								allocation_type2);
+						list2.add(en2);
+						// return list2;
+
+					}
+					//this week project
+					if (!engagement_status.equals("Cancelled") ) {
+						Engagement en3 = new Engagement(id, person_email, customer_name, status, project_name,
+								engagement_code, engagement_nature, country, start_date, end_date, engagement_status,
+								allocation_type2);
+						list3.add(en3);
+						// return list3;
+
+					}
+				}
+
+			}
+
+			list.add(list1);
+			list.add(list2);
+			list.add(list3);
+
+			return list;
+		} finally {
+			httpClient.close();
+		}
+	}
+
+}

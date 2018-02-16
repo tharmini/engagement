@@ -1,0 +1,55 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+ pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> 
+<!DOCTYPE html>
+<html>
+ <head>
+    <meta charset="UTF-8">
+    <title>This Week Project List</title>
+ </head>
+ <body>
+ 
+    <jsp:include page="_header.jsp"></jsp:include>
+ 
+    <h3>This Week Project</h3>
+ 
+    <p style="color: red;">${errorString}</p>
+ 	<div style="overflow-x:auto;">
+    <table border="1" cellpadding="5" cellspacing="1" >
+       <tr>
+          <th>Engagement ID</th>
+          <th>Customer Name</th>
+          
+          <th>Project name</th>
+          <th>Engagement Code</th>
+          <th>Allocation Type</th>
+          <th>Engagement nature</th>
+          <th>Country</th>
+          <th>start date</th>
+          <th>End date</th>
+          <th>Personal email</th>
+          
+          
+       </tr>
+       <c:forEach items="${engagementList3}" var="engagement" >
+          <tr>
+             <td>${engagement.getId()}</td>
+             <td>${engagement.getCustomer_name()}</td>
+             
+             <td>${engagement.getProject_name()}</td>
+             <td>${engagement.getEngagement_code()}</td>
+             <td>${engagement.getAllocation_type2()}</td>
+             <td>${engagement.getEngagement_nature()}</td>
+             <td>${engagement.getCountry()}</td>
+             <td>${engagement.getStart_date()}</td>
+             <td>${engagement.getEnd_date()}</td>
+             <td>${engagement.person_email()}</td>
+            
+          </tr>
+       </c:forEach>
+    </table>
+ 	</div>
+    <jsp:include page="_footer.jsp"></jsp:include>
+ 
+ </body>
+</html>

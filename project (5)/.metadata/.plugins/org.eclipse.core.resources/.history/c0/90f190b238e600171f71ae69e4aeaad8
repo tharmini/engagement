@@ -1,0 +1,211 @@
+package wproject;
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+public class HelloServlet extends HttpServlet {
+    public void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
+            throws IOException {
+
+        HashMap<String,String> hm=new HashMap<String,String>();
+
+
+
+
+
+        try{
+
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(new URL("http://192.168.56.212:9763/services/AllocationTrackerDS/_getsupport_engagements").openStream());
+            Document doc2 = dBuilder.parse(new URL("http://192.168.56.212:9763/services/AllocationTrackerDS/_get_allocationtype").openStream());
+            //optional, but recommended
+            //read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-workdoc.getDocumentElement().normalize();
+
+            System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+            NodeList nList = doc.getElementsByTagName("Engagement");
+            NodeList nList2 = doc2.getElementsByTagName("Allocation_type");
+            System.out.println(nList.getLength());
+            System.out.println(nList2.getLength());
+            String Array[]=new String[nList.getLength()];
+            String Array2[]=new String[ nList2.getLength()];
+            String Array4[]=new String[ nList2.getLength()];
+            String Array3[][]=new String[nList.getLength()][12];
+
+            System.out.println("----------------------------");
+            for (int temp = 0; temp < nList.getLength(); temp++) {
+                Node nNode = nList.item(temp);
+
+                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement = (Element) nNode;
+                    Array3[temp][11]=eElement.getElementsByTagName("allocation_type").item(0).getTextContent();
+                    Array3[temp][0]=eElement.getElementsByTagName("id").item(0).getTextContent();
+                    Array3[temp][1]= eElement.getElementsByTagName("person_email").item(0).getTextContent();
+                    Array3[temp][2]=eElement.getElementsByTagName("customer_name").item(0).getTextContent();
+                    Array3[temp][3]=eElement.getElementsByTagName("project_name").item(0).getTextContent();
+                    Array3[temp][4]=eElement.getElementsByTagName("engagement_code").item(0).getTextContent();
+                    Array3[temp][5]=eElement.getElementsByTagName("engagement_nature").item(0).getTextContent();
+                    Array3[temp][6]=eElement.getElementsByTagName("country").item(0).getTextContent();
+                    Array3[temp][7]=eElement.getElementsByTagName("start_date").item(0).getTextContent();
+                    Array3[temp][8]=eElement.getElementsByTagName("end_date").item(0).getTextContent();
+                    Array3[temp][10]=eElement.getElementsByTagName("engagement_status").item(0).getTextContent();
+
+
+
+
+                }
+            }
+            System.out.println("----------------------------");
+            System.out.println("----------------------------");
+            for (int temp = 0; temp < nList2.getLength(); temp++) {
+                Node nNode2 = nList2.item(temp);
+
+                if (nNode2.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement2 = (Element) nNode2;
+                    String x=eElement2.getElementsByTagName("id").item(0).getTextContent();
+                    String y=eElement2.getElementsByTagName("allocationType").item(0).getTextContent();
+
+                    hm.put(x,y);
+
+
+
+
+                }
+            }
+            //hasing the values
+            for(Map.Entry m:hm.entrySet()){
+                httpServletResponse.getWriter().println(m.getKey()+" "+m.getValue());
+            }
+
+            for (int temp = 0; temp < nList.getLength(); temp++) {
+
+
+                Array3[temp][9]=hm.get(Array3[temp][11]);
+
+
+
+            }
+
+            //ongoing project
+
+            for (int temp= 0; temp< nList.getLength(); temp++)
+            {
+                if (Array3[temp][10].equals("In Progress"))
+                {
+                    for (int i = 0; i< 12; i++)
+
+                    {
+
+
+                        httpServletResponse.getWriter().printf("%-35s", Array3[temp][i]);
+
+
+                    }
+                    System.out.println();
+                }
+
+
+            }
+            //last week projects
+            Date date = new Date();
+            Calendar c = Calendar.getInstance();
+            Calendar d = Calendar.getInstance();
+            c.setTime(date);
+            d.setTime(date);
+
+            int i = c.get(Calendar.DAY_OF_WEEK) - c.getFirstDayOfWeek();
+
+            c.add(Calendar.DATE, -i - 7);
+            d.add(Calendar.DATE,-i);
+
+            Date start = c.getTime();
+            Date start1=d.getTime();
+            c.add(Calendar.DATE, 6);
+
+            Date end = c.getTime();
+            Date end1 = date;
+
+            httpServletResponse.getWriter().println(start + " - " + end);
+            httpServletResponse.getWriter().println(start1 + " - " + end1);
+
+            for (int temp= 0; temp< nList.getLength(); temp++)
+            {
+                String sDate1=Array3[temp][8];
+                Date date1=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").parse(sDate1);
+
+                if (Array3[temp][10].equals("Completed") && date1.before(end)&& date1.after(start))
+                {
+
+                    for (i = 0; i < 12; i++)
+
+                    {
+
+
+                        httpServletResponse.getWriter().printf( Array3[temp][i]);
+
+
+                    }
+                    httpServletResponse.getWriter().println();
+
+                }
+
+
+            }
+
+
+            //engagement ended in this week
+            for (int temp= 0; temp< nList.getLength(); temp++)
+            {
+                String sDate1=Array3[temp][8];
+                Date date1=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").parse(sDate1);
+
+                if (!Array3[temp][10].equals("Cancelled") && date1.before(end1)&& date1.after(start1))
+                {
+
+                    for (i = 0; i < 12; i++)
+
+                    {
+
+
+                        httpServletResponse.getWriter().printf("%-35s", Array3[temp][i]);
+
+
+                    }
+                    httpServletResponse.getWriter().println();
+
+                }
+
+
+            }
+
+
+
+
+
+
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+
+
+    }
+}

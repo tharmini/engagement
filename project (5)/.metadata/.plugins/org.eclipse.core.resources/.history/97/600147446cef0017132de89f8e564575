@@ -1,0 +1,158 @@
+package wproject;
+
+import java.io.IOException;
+import java.net.URL;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+public class Utils
+{
+
+	public static List<List<Engagement>> queryEngagement() throws IOException, Exception{
+		
+		
+        List<Engagement> list1 = new ArrayList<Engagement>();
+       List<Engagement> list2 = new ArrayList<Engagement>();
+       List<Engagement> list3 = new ArrayList<Engagement>();
+       
+       List<List<Engagement>> list = new ArrayList<List<Engagement>>();
+
+
+        HashMap<String,String> hm=new HashMap<String,String>();
+
+
+
+
+
+
+
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.parse(new URL("http://192.168.56.212:9763/services/AllocationTrackerDS/_getsupport_engagements").openStream());
+        Document doc2 = dBuilder.parse(new URL("http://192.168.56.212:9763/services/AllocationTrackerDS/_get_allocationtype").openStream());
+        //optional, but recommended
+            //read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-workdoc.getDocumentElement().normalize();
+
+           
+            NodeList nList = doc.getElementsByTagName("Engagement");
+            NodeList nList2 = doc2.getElementsByTagName("Allocation_type");
+            System.out.println(nList.getLength());
+            System.out.println(nList2.getLength());
+
+            for (int temp = 0; temp < nList2.getLength(); temp++) {
+                Node nNode2 = nList2.item(temp);
+
+                if (nNode2.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement2 = (Element) nNode2;
+                    String x = eElement2.getElementsByTagName("id").item(0).getTextContent();
+                    String y = eElement2.getElementsByTagName("allocationType").item(0).getTextContent();
+
+                    hm.put(x, y);
+
+
+                }
+            }
+
+            for (int temp = 0; temp < nList.getLength(); temp++) {
+                Node nNode = nList.item(temp);
+
+                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement = (Element) nNode;
+                    String allocation_type=eElement.getElementsByTagName("allocation_type").item(0).getTextContent();
+                    String id=eElement.getElementsByTagName("id").item(0).getTextContent();
+                    String person_email = eElement.getElementsByTagName("person_email").item(0).getTextContent();
+                    String customer_name =eElement.getElementsByTagName("customer_name").item(0).getTextContent();
+                   String project_name=eElement.getElementsByTagName("project_name").item(0).getTextContent();
+                    String engagement_code =eElement.getElementsByTagName("engagement_code").item(0).getTextContent();
+                    String engagement_nature=eElement.getElementsByTagName("engagement_nature").item(0).getTextContent();
+                   String country=eElement.getElementsByTagName("country").item(0).getTextContent();
+                   String status=eElement.getElementsByTagName("status").item(0).getTextContent();
+                    String start_date=eElement.getElementsByTagName("allocation_start_date").item(0).getTextContent();
+                   String end_date=eElement.getElementsByTagName("allocation_end_date").item(0).getTextContent();
+                    String engagement_status=eElement.getElementsByTagName("engagement_status").item(0).getTextContent();
+                    String allocation_type2=hm.get(allocation_type);
+                    if(engagement_status.equals("Cancelled"))
+                    {
+                    	Date date = new Date();
+                        Calendar c = Calendar.getInstance();
+                        Calendar d = Calendar.getInstance();
+                        c.setTime(date);
+                        d.setTime(date);
+
+                        int i = c.get(Calendar.DAY_OF_WEEK) - c.getFirstDayOfWeek();
+
+                        c.add(Calendar.DATE, -i - 7);
+                        d.add(Calendar.DATE,-i);
+
+                        Date start = c.getTime();
+                        Date start1=d.getTime();
+                        c.add(Calendar.DATE, 6);
+
+                        Date end = c.getTime();
+                        Date end1 = date;
+                        String sDate1=end_date;
+                        String sDate2=start_date;
+                        
+                        Date date1=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").parse(sDate1);
+                        Date date2=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").parse(sDate2);
+                    if (engagement_status.equals("In Progress") && end1.before(date1)&& end1.after(date2) ) 
+                    {
+                       Engagement en =new Engagement(id, person_email, customer_name,status, project_name, engagement_code, engagement_nature, country, start_date, end_date, 				engagement_status, allocation_type2);
+						list1.add(en);
+						//return list1;
+                    }
+                    
+
+                    if (engagement_status.equals("Completed") && date1.before(end)&& date1.after(start))
+                    {
+                    	Engagement en2 =new Engagement(id, person_email, customer_name,status, project_name, engagement_code, engagement_nature, country, start_date, end_date, engagement_status, allocation_type2);
+						list2.add(en2);
+						//return list2;
+						
+
+                    }
+                    if (!engagement_status.equals("Cancelled") && date1.before(end1)&& date1.after(start1))
+                    {
+                    	Engagement en3 =new Engagement(id, person_email, customer_name,status, project_name, engagement_code, engagement_nature, country, start_date, end_date, engagement_status, allocation_type2);
+						list3.add(en3);
+						//return list3;
+						
+                    }
+
+                    	
+
+                }
+                }
+            }
+            list.add(list1);
+            list.add(list2);
+            list.add(list3);
+
+
+
+
+            
+
+
+
+
+            return list;
+
+
+    }
+}
