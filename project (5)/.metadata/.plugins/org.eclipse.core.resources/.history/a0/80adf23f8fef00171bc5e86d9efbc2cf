@@ -1,0 +1,33 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<div style="background:#2F4F4F; height: 100px; padding: 10px;">
+  
+  <center><h1> WSO2</h1></center>
+  </div>
+ 
+  <div class="container-fluid d-flex align-items-center justify-content-between">
+          <div class="navbar-header"><a href="index.html" class="navbar-brand">
+              <div class="brand-text brand-big visible text-uppercase"><strong class="text-primary">DASH</strong><strong>BOARD</strong></div>
+              <div class="brand-text brand-sm"><strong class="text-primary">D</strong><strong>B</strong></div></a>
+            <button class="sidebar-toggle"><i class="fa fa-long-arrow-left"></i></button>
+          </div>
+		  
+          <ul class="right-menu list-inline no-margin-bottom">    
+            <li class="list-inline-item"><a href="#" class="search-open nav-link"><i class="icon-magnifying-glass-browser"></i></a></li>
+            
+            <li class="list-inline-item logout">                   <a id="logout" href="login.html" class="nav-link">Logout <i class="icon-logout"></i></a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+	
+    <div class="d-flex align-items-stretch">
+      <!-- Sidebar Navigation-->
+      <nav id="sidebar">
+        <div class="sidebar-header d-flex align-items-center">
+          <div><img src="img/WSO2_Software_Logo.png" alt="..." class="img-fluid"></div>
+		  
+          
+        </div>
+ 
+</div>

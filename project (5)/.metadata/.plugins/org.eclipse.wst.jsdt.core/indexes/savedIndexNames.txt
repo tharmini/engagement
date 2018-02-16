@@ -1,0 +1,8 @@
+INDEX VERSION 1.3+/home/tharmini/Downloads/project (5)/.metadata/.plugins/org.eclipse.wst.jsdt.core/indexes
+4109671602.index
+4145472797.index
+3340896442.index
+2936786629.index
+1470106904.index
+1871549369.index
+16819242.index

@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<html>
+  <head> 
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="all,follow">
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome CSS-->
+    <link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css">
+    <!-- Custom Font Icons CSS-->
+    <link rel="stylesheet" href="css/font.css">
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Muli:300,400,700">
+    
+    <link rel="stylesheet" href="css/style.default.css" id="theme-stylesheet">
+ 
+    <link rel="stylesheet" href="css/custom.css">
+     <link href="css/material-icons.css" rel="stylesheet" />
+   
+    <link rel="shortcut icon" href="WebContent/WEB-INF/img/WSO2_Software_Logo.png">
+    
+  </head>
+  <body>
+    <header class="header">   
+     
+    </header>
+	
+    <div class="d-flex align-items-stretch">
+      <!-- Sidebar Navigation-->
+      <nav id="sidebar">
+        <div class="sidebar-header d-flex align-items-center">
+          <div><img src="img/WSO2_Software_Logo.png" alt="..." class="img-fluid"></div>
+		  
+          
+        </div>
+		
+		<span class="heading">Main</span>
+        <ul class="list-unstyled">
+                <a href="${pageContext.request.contextPath}/">Home</a><br></br>
+   
+   <a href="${pageContext.request.contextPath}/engagementList">engagementList</a><br></br>
+   
+   <a href="${pageContext.request.contextPath}/Thisweekproject">This week project</a><br></br>
+   
+   <a href="${pageContext.request.contextPath}/Lastweekproject">Last week project</a><br></br>
+    
+                
+      </nav>
+      <div class="page-content">
+		
+	  
+        <div class="page-header">
+          <div class="container-fluid">
+		  <h2 class="h5 no-margin-bottom">
+			
+            Ongoing Project Details</h2>
+          </div>
+        </div>
+        <section class="no-padding-bottom">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-lg-6">
+               ************88
+              </div>
+            </div>
+          </div>
+        </section>
+        <footer class="footer">
+          <div class="footer__block block no-margin-bottom">
+            <div class="container-fluid text-center">
+              <!-- Please do not remove the backlink to us unless you support us at https://bootstrapious.com/donate. It is part of the license conditions. Thank you for understanding :)-->
+              <p class="no-margin-bottom">2017 &copy;*****</p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <!-- Javascript files-->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"> </script>
+    <script type="text/javascript" src="vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="vendor/jquery.cookie/jquery.cookie.js"> </script>
+    <script type="text/javascript" src="vendor/chart.js/Chart.min.js"></script>
+    <script type="text/javascript" src="js/charts-home.js"></script>
+    <script type="text/javascript" src="js/front.js"></script>
+  </body>
+</html>
+
+
+
+
